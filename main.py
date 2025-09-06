@@ -21,8 +21,8 @@ async def main():
     application.add_handler(CommandHandler("start", start))
     application.add_handler(
         MessageHandler(
-            filters.TEXT
-            & ~filters.COMMAND
+            #filters.TEXT &
+            ~filters.COMMAND
             & ~filters.Chat(
                 chat_id=[TELEGRAM_SUPPORT_CHAT_ID, PERSONAL_ACCOUNT_CHAT_ID]
             ),
@@ -31,8 +31,8 @@ async def main():
     )
     application.add_handler(
         MessageHandler(
-            filters.TEXT
-            & filters.Chat(chat_id=[TELEGRAM_SUPPORT_CHAT_ID, PERSONAL_ACCOUNT_CHAT_ID])
+            #filters.TEXT &
+            filters.Chat(chat_id=[TELEGRAM_SUPPORT_CHAT_ID, PERSONAL_ACCOUNT_CHAT_ID])
             & filters.REPLY,
             forward_to_user,
         )

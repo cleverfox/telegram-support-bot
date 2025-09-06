@@ -7,12 +7,16 @@ from settings import (
     WELCOME_MESSAGE,
 )
 import logging
+import os
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a welcome message when the command /start is issued."""
+    print (update.effective_user)
+    welcome = os.getenv(f"WELCOME_MESSAGE_{update.effective_user.language_code}", WELCOME_MESSAGE)
     await update.message.reply_text(
-        f"{WELCOME_MESSAGE} {update.effective_user.first_name}"
+            welcome
+        #f"{WELCOME_MESSAGE} {update.effective_user.language_code}" # "{update.effective_user.first_name}"
     )
 
 
@@ -28,10 +32,18 @@ async def forward_to_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if forwarded_msg:
         # Store the user_id in the conversation context
+        if str(update.effective_user.id) not in context.bot_data:
+            username = ''
+            if getattr(update.effective_user, 'username', ""):
+                username=f"@{update.effective_user.username}"
+            t = f"user {str(update.effective_user.id)} {str(update.effective_user.language_code)} {username}"
+            await context.bot.send_message(chat_id=TELEGRAM_SUPPORT_CHAT_ID,
+                                           text=t)
+            context.bot_data[str(update.effective_user.id)] = 1
         context.bot_data[str(forwarded_msg.message_id)] = update.effective_user.id
-        await update.message.reply_text(
-            "Your message has been forwarded. We'll get back to you soon!"
-        )
+        #await update.message.reply_text(
+        #    "Your message has been forwarded. We'll get back to you soon!"
+        #)
         logging.info(
             f"Forwarded message ID: {forwarded_msg.message_id} from user ID: {update.effective_user.id}"
         )
