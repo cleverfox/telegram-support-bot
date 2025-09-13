@@ -1,0 +1,14 @@
+services:
+  tgsupport_bot:
+    build: .
+    volumes:
+      - .:/data
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - TELEGRAM_SUPPORT_CHAT_ID=${TELEGRAM_SUPPORT_CHAT_ID}
+      - REPLY_TO_THIS_MESSAGE=${REPLY_TO_THIS_MESSAGE}
+      - PERSONAL_ACCOUNT_CHAT_ID=123
+      - WELCOME_MESSAGE=${WELCOME_MESSAGE}
+      - WELCOME_MESSAGE_ru=${WELCOME_MESSAGE_ru}
+      - FORWARD_MODE=${FORWARD_MODE}
+
