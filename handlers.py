@@ -64,14 +64,30 @@ async def forward_to_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logging.info(f"Original message ID: {original_message_id}, User ID: {user_id}")
         if user_id:
             try:
-                await context.bot.send_message(
-                    chat_id=user_id, text=update.message.text
-                )
-                await update.message.reply_text(
-                    "Message sent to the user successfully."
-                )
-                # Clean up the stored user_id
-                del context.bot_data[original_message_id]
+                if(update.message.text):
+                    await context.bot.send_message(
+                            chat_id=user_id,
+                            text=update.message.text,
+                            )
+                    await update.message.reply_text(
+                            "Message sent to the user successfully."
+                            )
+                    del context.bot_data[original_message_id]
+                elif update.message.sticker:
+                    await context.bot.send_sticker(chat_id=user_id, sticker=update.message.sticker.file_id)
+                    await update.message.reply_text("Sticker forwarded successfully.")
+                    del context.bot_data[original_message_id]
+                elif update.message.photo:
+                    await context.bot.send_photo(chat_id=user_id, photo=update.message.photo[-1].file_id, caption=update.message.caption_html or None, parse_mode="HTML")
+                    await update.message.reply_text("Photo forwarded successfully.")
+                    del context.bot_data[original_message_id]
+                elif update.message.document:
+                    await context.bot.send_document(chat_id=user_id, document=update.message.document.file_id, caption=update.message.caption_html or None, parse_mode="HTML")
+                    await update.message.reply_text("Document forwarded successfully.")
+                    del context.bot_data[original_message_id]
+                else:
+                    await update.message.reply_text("Unsupported content")
+
             except Exception as e:
                 logging.error(f"Error sending message to user: {str(e)}")
                 await update.message.reply_text(
